@@ -1,2 +1,2 @@
 # terraform-sentinel-openstack
-Terraform Sentine Policy for Openstack
+Terraform Sentinel Policy for Openstack

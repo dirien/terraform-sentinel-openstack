@@ -1,0 +1,17 @@
+import "tfplan/v2" as tfplan
+import "strings"
+
+openstack_compute_instances = filter tfplan.resource_changes as _, rc {
+  rc.type is "openstack_compute_instance_v2" and
+  (rc.change.actions contains "create" or rc.change.actions is ["update"])
+}
+
+suffixname = rule {
+    all openstack_compute_instances as _, instances {
+    strings.has_prefix(instances.change.after.name, "azure-agent")
+    }
+}
+
+main = rule {
+   suffixname is true
+}

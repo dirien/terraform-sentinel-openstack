@@ -1,0 +1,18 @@
+import "tfplan/v2" as tfplan
+
+openstack_networking_secgroup_rules = filter tfplan.resource_changes as _, rc {
+  rc.type is "openstack_networking_secgroup_rule_v2" and
+  (rc.change.actions contains "create" or rc.change.actions is ["update"])
+}
+
+forbidden_cidrs = ["0.0.0.0/0"]
+
+forbidden_cidr = rule {
+    all openstack_networking_secgroup_rules as _, secgroup {
+    secgroup.change.after.remote_ip_prefix not in forbidden_cidrs
+    }
+}
+
+main = rule {
+   forbidden_cidr is true
+}
